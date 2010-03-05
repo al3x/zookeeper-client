@@ -1,4 +1,4 @@
-package com.twitter.zookeeperloadtest
+package com.twitter.zookeeper.client
 
 import org.apache.zookeeper.{Watcher, WatchedEvent}
 

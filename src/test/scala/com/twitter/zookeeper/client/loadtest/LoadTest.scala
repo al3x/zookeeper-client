@@ -1,4 +1,4 @@
-package com.twitter.zookeeper.client.test
+package com.twitter.zookeeper.client.test.loadtest
 
 import com.twitter.jackhammer.LoggingLoadTest
 import net.lag.configgy.{Config, Configgy}

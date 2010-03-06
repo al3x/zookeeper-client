@@ -4,7 +4,7 @@ h2. About
 
 A Scala client for "Apache ZooKeeper":http://hadoop.apache.org/zookeeper/, "a centralized service for maintaining configuration information, naming, providing distributed synchronization, and providing group services".
 
-ZooKeeper provides a Java client library that's perfectly usable from Scala. This just wraps some idioms and niceties around that library to make it as Scala-friendly as possible.
+ZooKeeper provides a Java client library that's perfectly usable from Scala. This just wraps some idioms and niceties around that library to make it as Scala-friendly as possible. It also ships with tests, so you can have some confidence that you'll be able to interact with ZooKeeper from Scala in a predictable and reliable way.
 
 h2. Usage
 

@@ -1,5 +1,6 @@
-package com.twitter.zookeeperloadtest
+package com.twitter.zookeeper.client
 
+import java.net.{Socket, SocketException}
 import org.scala_tools.javautils.Imports._
 import org.apache.zookeeper.{CreateMode, Watcher, WatchedEvent}
 import org.apache.zookeeper.CreateMode._
@@ -8,17 +9,22 @@ import org.apache.zookeeper.data.{ACL, Id}
 import org.specs._
 
 
-object ZookeeperClientSpec extends Specification {
+class ZookeeperClientSpec extends Specification {
   "ZookeeperClient" should {
+    val zookeeperHost = "localhost"
+    val zookeeperPort = 2181
+
     val watcher = new FakeWatcher
-    val zkClient = new ZookeeperClient(watcher, "localhost:2181")
+    val zkClient = new ZookeeperClient(watcher, "%s:%s".format(zookeeperHost, zookeeperPort))
+
+    doBefore {
+      // we need to be sure that a ZooKeeper server is running in order to test
+      new Socket(zookeeperHost, zookeeperPort) must throwA[SocketException]
+    }
 
     doLast {
       zkClient.close
     }
-
-    // TODO need a doFirst to ensure that a Zookeeper server is running
-    // before proceeding with the other tests, ala Robey's Ostrich stuff
 
     "be able to be instantiated with a FakeWatcher" in {
       zkClient mustNot beNull
@@ -53,4 +59,3 @@ object ZookeeperClientSpec extends Specification {
     }
   }
 }
-

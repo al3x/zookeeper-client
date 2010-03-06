@@ -1,4 +1,4 @@
-package com.twitter.zookeeperloadtest
+package com.twitter.zookeeper.client
 
 import org.scala_tools.javautils.Imports._
 import net.lag.configgy.{Config, Configgy}
@@ -15,58 +15,37 @@ class ZookeeperClient(watcher: Watcher, hostnamePortPairs: String) {
 
   val sessionTimeout = config.getInt("session-timeout", 3000)
 
-  private lazy val zkClient = new ZooKeeper(hostnamePortPairs, sessionTimeout, watcher)
+  private lazy val zk = new ZooKeeper(hostnamePortPairs, sessionTimeout, watcher)
 
   def close {
-    send { zk => zk.close() }
+    zk.close()
   }
 
   def get(path: String): Array[Byte] = {
-    send { zk =>
-      val stat: Stat = zk.exists(path, false)
-      zk.getData(path, false, stat)
-    }
+    val stat: Stat = zk.exists(path, false)
+    zk.getData(path, false, stat)
   }
 
   // FIXME update to 2.8 Java collection conversions
   def getChildren(path: String): Seq[String] = {
-    send { zk =>
-      zk.getChildren(path, false).asScala
-    }
+    zk.getChildren(path, false).asScala
   }
 
   def create(path: String, data: Array[Byte], acl: java.util.List[ACL], createMode: CreateMode): String = {
-    send { zk =>
-      zk.create(path, data, acl, createMode)
-    }
+    zk.create(path, data, acl, createMode)
   }
 
   def delete(path: String) {
-    send { zk =>
-      zk.delete(path, -1)
-    }
+    zk.delete(path, -1)
   }
 
   def isAlive: Boolean = {
-    val result: Stat = send { zk =>
-      zk.exists("/", false)  // do not watch
-    }
+    val result: Stat = zk.exists("/", false)  // do not watch
 
     if (result.getVersion >= 0) {
       true
     } else {
       false
-    }
-  }
-
-  private def send[T](f: ZooKeeper => T): T = {
-    try {
-      f(zkClient)
-    } catch {
-      case e: KeeperException => {
-        log.error(e, "Error performing Zookeeper operation")
-        throw e
-      }
     }
   }
 }
